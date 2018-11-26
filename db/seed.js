@@ -6,7 +6,8 @@ models.db
   .then(() => {
     models.User.create({ username: 'potato1', email: 'email1@test.com', password: 'password' });
     models.User.create({ username: 'tomato2', email: 'email2@test.com', password: 'password' });
-    models.User.create({ username: 'brosato3', email: 'email3@test.com', password: 'password' });
+    const test = models.User.create({ username: 'brosato3', email: 'email3@test.com', password: 'password' });
+    test.test();
   })
   .then(res => console.log(res.dataValues))
   .then(() => models.db.close())

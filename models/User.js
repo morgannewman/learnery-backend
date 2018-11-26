@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 module.exports = (sequelize, DataTypes) =>
   sequelize.define('users', {
     id: {
@@ -18,5 +20,11 @@ module.exports = (sequelize, DataTypes) =>
       unique: true,
       validate: { isEmail: true }
     },
-    password: DataTypes.STRING
+    password: {
+      type: DataTypes.STRING,
+      set(input) {
+				// Must not be async or setter breaks
+        this.setDataValue('password', bcrypt.hashSync(input, 10));
+      }
+    }
   });
