@@ -2,6 +2,7 @@ const { JWT_SECRET, JWT_EXPIRY } = require('../config');
 const jwt = require('jsonwebtoken');
 const router = require('express').Router();
 const passport = require('passport');
+const models = require('../models');
 
 // Setup passport authentication
 const localAuth = passport.authenticate('local', { session: false, failWithError: true });
@@ -22,6 +23,25 @@ router.post('/login', localAuth, function(req, res) {
 router.post('/refresh', jwtAuth, (req, res) => {
   const authToken = createAuthToken(req.user);
   res.json({ authToken });
+});
+
+router.post('/register', (req, res, next) => {
+  const possibleFields = ['email', 'password', 'username'];
+  const newUser = {};
+  for (const field of possibleFields) {
+    if (field in req.body) newUser[field] = req.body[field];
+  }
+  newUser.username = newUser.username.trim();
+
+  return models.User.create(newUser)
+    .then(user => res.status(201).json(user))
+    .catch(err => {
+      if (err.original.code === '23505') {
+        err = new Error('That username is already taken');
+        err.status = 403;
+      }
+      next(err);
+    });
 });
 
 module.exports = router;

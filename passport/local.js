@@ -25,6 +25,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
 			// Add `user` to the request object
       const user = userModel.dataValues;
       delete user.password;
+      delete user.id;
       return done(null, user);
     })
     .catch(err => {
