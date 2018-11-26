@@ -6,22 +6,22 @@ module.exports = (sequelize, DataTypes) =>
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      unique: true
+      unique: true,
+      allowNull: false
     },
     username: {
       type: DataTypes.STRING,
       unique: true,
-      validate: {
-        is: /^(\w|-|_){2,16}$/i // allows alphanumeric, -, _ from 2-16 length
-      }
+      allowNull: false
     },
     email: {
       type: DataTypes.STRING,
       unique: true,
-      validate: { isEmail: true }
+      allowNull: false
     },
     password: {
       type: DataTypes.STRING,
+      allowNull: false,
       set(input) {
 				// Must not be async or setter breaks
         this.setDataValue('password', bcrypt.hashSync(input, 10));
