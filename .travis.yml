@@ -1,0 +1,7 @@
+language: node_js
+node_js: lts/*
+deploy:
+  provider: heroku
+  api_key:
+    secure: "XQ6X0SKY/6ge/OnT9/qGPtyrcODnu+pBpHmSPKIIZVGJH8mIIATyvCz58MIYXvWYm4n0qk4reB9kvPSN+C73LlOKF8bz3qv/E1Rlri2yyjaIbBizpj3g0e6kUJZslwWIi1cxWqdRZzXlPPX0pAXmnactbtfYDE4eAilTFjX6yLU/nXWpsqXDIuyaY5q8agzlQXTK0Ne5bBIdplM89D+6UAb+vPjfvuEX4oT/vN1EmqEjYjgg5BY8JVErnn9MW+pNs+2bYqFuXZ5+p32P5dAJoTk09mmHXtOa7T4dgWhWUGio85dNLRR6y5icKzwASSYkyHllL8At0U/nUBSmTLGZ8pKsbPj7nwzofFnVjnt9kHUCviyD+HuYBfHH/0SrobMPzwprNp9pfhTUC6dTPbPb+Gn0NZ/EksNRvPRcCZ/8nXPNVtirBKWiQG6UgphiN/8qXMBzNPu4hht9hk+MW00qgM3Cl1vTeUUiIPn67glwzIGdTaT5g6Kw14lTVBEMFr/7w/ufWjNFySM5Kp728oi6GgqGvpBudJUHkYX/8fpxaDLHxNXUVHWQUTDV2V2JQfyAeySPzEIu50P6EqGek/S6LCSI3WFy+0VX3aGaPtHWTb16yj9K+vdv07HDy1a5i6loel1/YQzLBde1AgRIXjRLidYtrdP9qpUxbB5J/el8u/k="
+  app: learnery-backend
