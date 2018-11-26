@@ -5,8 +5,9 @@ const passport = require('passport');
 const compress = require('compression');
 const helmet = require('helmet');
 const cors = require('cors');
+const Sequelize = require('sequelize');
 // config
-const { PORT, POSTGRES_DB_URL } = require('./config');
+const { PORT } = require('./config');
 // auth strategies
 const localStrategy = require('./passport/local');
 const jwtStrategy = require('./passport/jwt');
@@ -39,7 +40,7 @@ passport.use(localStrategy);
 passport.use(jwtStrategy);
 
 // Mount routers
-app.use('/auth', authRouter);
+// app.use('/auth', authRouter);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
@@ -59,14 +60,12 @@ app.use((err, req, res, next) => {
   }
 });
 
-// Connect to DB and Listen for incoming connections
 if (require.main === module) {
-	// TODO: Add DB connection
-
   app.listen(PORT, function() {
     console.info(`Server listening on ${this.address().port}`);
   }).on('error', err => {
     console.error(err);
+    console.log('Is the postgres service running? Try $ pg_ctl start');
   });
 }
 
