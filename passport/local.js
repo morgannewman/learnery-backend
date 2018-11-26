@@ -13,7 +13,6 @@ const localStrategy = new LocalStrategy((username, password, done) => {
           location: 'email'
         });
       }
-      const user = userModel.dataValues;
 			// Ensure input password matches user password
       const isValid = userModel.validatePassword(password);
       if (!isValid) {
@@ -24,6 +23,8 @@ const localStrategy = new LocalStrategy((username, password, done) => {
         });
       }
 			// Add `user` to the request object
+      const user = userModel.dataValues;
+      delete user.password;
       return done(null, user);
     })
     .catch(err => {
