@@ -4,6 +4,7 @@ const router = require('express').Router();
 const passport = require('passport');
 const models = require('../models');
 const { requireFields, constructObject, validateUser } = require('./helpers');
+const { constructQueue } = require('../db/data');
 
 // Setup passport authentication
 const localAuth = passport.authenticate('local', {
@@ -33,35 +34,31 @@ router.post('/refresh', jwtAuth, (req, res) => {
 	return res.json(result);
 });
 
-router.post('/register', requireFields(['username', 'password', 'email']), validateUser, (req, res, next) => {
+router.post('/register', requireFields(['username', 'password', 'email']), validateUser, async (req, res, next) => {
 	const possibleFields = ['email', 'password', 'username'];
-
-	return models.Flashcard.findAll({ attributes: ['id'] })
-		.then(results => {
-			// Build user object from req
-			const newUser = constructObject(req, possibleFields);
-			delete newUser.userId;
-			newUser.username = newUser.username.trim();
-			// Build queue from results
-			let queue = results.map(result => result.dataValues.id);
-			newUser.queue = queue;
-			return models.User.create(newUser);
-		})
-		.then(_user => {
-			const user = _user.dataValues;
-			user.authToken = createAuthToken(user);
-			delete user.id, delete user.password, delete user.queue;
-			return res.status(201).json(user);
-		})
-		.catch(err => {
-			if (err.original && err.original.code === '23505') {
-				const message = err.original.detail;
-				if (message.includes('email')) err = new Error('That email is already taken');
-				if (message.includes('username')) err = new Error('That username is already taken');
-				err.status = 403;
-			}
-			next(err);
-		});
+	let userModel;
+	try {
+		// Create new user from body
+		const newUser = constructObject(req, possibleFields);
+		delete newUser.userId;
+		newUser.username = newUser.username.trim();
+		newUser.queue = constructQueue();
+		userModel = await models.User.create(newUser);
+	} catch (err) {
+		if (err.original && err.original.code === '23505') {
+			const message = err.original.detail;
+			if (message.includes('email')) err = new Error('That email is already taken');
+			if (message.includes('username')) err = new Error('That username is already taken');
+			err.status = 403;
+		}
+		return next(err);
+	}
+	// Copy and clean up data in new user model
+	const user = { ...userModel.dataValues };
+	delete user.id, delete user.password, delete user.queue;
+	// Append an auth token to model
+	user.authToken = createAuthToken(user);
+	return res.status(201).json(user);
 });
 
 module.exports = router;
