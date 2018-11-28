@@ -23,8 +23,12 @@ module.exports = (sequelize, DataTypes) =>
       type: DataTypes.STRING,
       allowNull: false,
       set(input) {
-				// Must not be async or setter breaks
+        // Must not be async or setter breaks
         this.setDataValue('password', bcrypt.hashSync(input, 10));
       }
+    },
+    queue: {
+      type: DataTypes.JSONB,
+      allowNull: false
     }
   });

@@ -14,7 +14,7 @@ const jwtStrategy = require('./passport/jwt');
 
 // routers
 const authRouter = require('./routes/auth.router');
-
+const flashCardRouter = require('./routes/flashcard.router');
 // Create an Express application
 const app = express();
 
@@ -41,7 +41,11 @@ passport.use(jwtStrategy);
 
 // Mount routers
 app.use('/auth', authRouter);
-
+app.use(
+  '/api',
+  passport.authenticate('jwt', { session: false, failWithError: true })
+);
+app.use('/api/flashcard', flashCardRouter);
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
@@ -61,12 +65,14 @@ app.use((err, req, res, next) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, function() {
-    console.info(`Server listening on ${this.address().port}`);
-  }).on('error', err => {
-    console.error(err);
-    console.log('Is the postgres service running? Try $ pg_ctl start');
-  });
+  app
+    .listen(PORT, function() {
+      console.info(`Server listening on ${this.address().port}`);
+    })
+    .on('error', err => {
+      console.error(err);
+      console.log('Is the postgres service running? Try $ pg_ctl start');
+    });
 }
 
 module.exports = app; // Export for testing

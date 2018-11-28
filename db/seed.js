@@ -4,10 +4,14 @@ models.db
   .drop()
   .then(() => models.db.sync())
   .then(() => {
-    models.User.create({ username: 'potato1', email: 'email1@test.com', password: 'password' });
-    models.User.create({ username: 'tomato2', email: 'email2@test.com', password: 'password' });
-    const test = models.User.create({ username: 'brosato3', email: 'email3@test.com', password: 'password' });
-    test.test();
+    models.Flashcard.create({ question: 'Are u nice', answer: 'no' });
+    models.Flashcard.create({ question: 'Are u happy', answer: 'yes' });
+    models.Flashcard.create({ question: 'Are u ambivalent', answer: 'maybe' });
+    models.Flashcard.create({ question: 'Are u ?', answer: '?' });
+    models.Flashcard.create({ question: 'Are u nice', answer: 'no' });
+    models.Flashcard.create({ question: 'Are u happy', answer: 'yes' });
+    models.Flashcard.create({ question: 'Are u ambivalent', answer: 'maybe' });
+    models.Flashcard.create({ question: 'Are u ?', answer: '?' });
   })
   .then(res => console.log(res.dataValues))
   .then(() => models.db.close())

@@ -6,8 +6,14 @@ const models = require('../models');
 const { requireFields, constructObject, validateUser } = require('./helpers');
 
 // Setup passport authentication
-const localAuth = passport.authenticate('local', { session: false, failWithError: true });
-const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
+const localAuth = passport.authenticate('local', {
+  session: false,
+  failWithError: true
+});
+const jwtAuth = passport.authenticate('jwt', {
+  session: false,
+  failWithError: true
+});
 
 const createAuthToken = user => {
   return jwt.sign({ user }, JWT_SECRET, {
@@ -16,31 +22,51 @@ const createAuthToken = user => {
   });
 };
 
-router.post('/login', requireFields(['username', 'password']), validateUser, localAuth, (req, res) => {
-  const authToken = createAuthToken(req.user);
-  return res.json({ authToken });
-});
+router.post(
+  '/login',
+  requireFields(['username', 'password']),
+  validateUser,
+  localAuth,
+  (req, res) => {
+    const authToken = createAuthToken(req.user);
+    return res.json({ authToken });
+  }
+);
 
 router.post('/refresh', jwtAuth, (req, res) => {
   const authToken = createAuthToken(req.user);
   res.json({ authToken });
 });
 
-router.post('/register', requireFields(['username', 'password', 'email']), validateUser, (req, res, next) => {
-  const possibleFields = ['email', 'password', 'username'];
-  const newUser = constructObject(req, possibleFields);
-  delete newUser.userId;
-  newUser.username = newUser.username.trim();
+router.post(
+  '/register',
+  requireFields(['username', 'password', 'email']),
+  validateUser,
+  (req, res, next) => {
+    const possibleFields = ['email', 'password', 'username'];
 
-  return models.User.create(newUser)
-    .then(user => res.status(201).json(user))
-    .catch(err => {
-      if (err.original && err.original.code === '23505') {
-        err = new Error('That username is already taken');
-        err.status = 403;
-      }
-      next(err);
-    });
-});
+    const newUser = constructObject(req, possibleFields);
+    delete newUser.userId;
+    newUser.username = newUser.username.trim();
+
+    return models.Flashcard.findAll({ attributes: ['id'] })
+      .then(results => {
+        let queue = results.map(result => result.dataValues.id);
+        console.log(queue);
+        newUser.queue = queue;
+      })
+      .then(() => {
+        models.User.create(newUser)
+          .then(user => res.status(201).json(user))
+          .catch(err => {
+            if (err.original && err.original.code === '23505') {
+              err = new Error('That username is already taken');
+              err.status = 403;
+            }
+            next(err);
+          });
+      });
+  }
+);
 
 module.exports = router;
