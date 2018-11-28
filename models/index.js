@@ -1,7 +1,10 @@
 const bcrypt = require('bcryptjs');
 const Sequelize = require('sequelize');
+const cls = require('continuation-local-storage');
 const { POSTGRES_DB_URL } = require('../config');
 
+const namespace = cls.createNamespace('sequelize-cls');
+Sequelize.useCLS(namespace);
 const db = new Sequelize(POSTGRES_DB_URL, { dialect: 'postgres' });
 
 const models = {
