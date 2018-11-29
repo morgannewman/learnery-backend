@@ -23,7 +23,7 @@ const createAuthToken = user => {
 	});
 };
 
-router.post('/login', requireFields(['username', 'password']), validateUser, localAuth, (req, res) => {
+router.post('/login', requireFields(['username', 'password']), validateUser, localAuth, (req, res, next) => {
 	const result = { ...req.user, authToken: createAuthToken(req.user) };
 	delete result.queue;
 	return res.json(result);

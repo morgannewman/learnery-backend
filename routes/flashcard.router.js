@@ -2,28 +2,18 @@ const router = require('express').Router();
 const models = require('../models/index.js');
 const { requireFields } = require('./helpers');
 
-router.get('/', (req, res, next) => {
-	let user;
-	models.User.findOne({
+router.get('/', async (req, res, next) => {
+	const user = await models.User.findOne({
 		where: {
 			username: req.user.username
 		}
-	}).then(_user => {
-		user = _user;
-		console.log(user.dataValues.queue);
-		let nextId = user.dataValues.queue[0].id;
-		return models.Flashcard.findOne({
-			where: {
-				id: nextId
-			}
-		}).then(card => {
-			let flashC = {
-				question: card.dataValues.question,
-				answer: card.dataValues.answer
-			};
-			res.json(flashC);
-		});
 	});
+	const card = await models.Flashcard.findOne({
+		where: {
+			id: user.dataValues.queue[0].id
+		}
+	});
+	return res.json(card);
 });
 
 function constructNewQueue(queue, M = null) {
