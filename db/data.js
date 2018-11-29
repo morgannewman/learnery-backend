@@ -22,7 +22,14 @@ function constructQueue() {
   for (let i = 1; i <= n; i++) {
     result.push({
       id: i,
-      M: 1
+      M: 1,
+      stats: {
+        timesCorrect: 0,
+        timesIncorrect: 0,
+        streak: 0,
+        maxStreak: 0,
+        lastSeen: null
+      }
     });
   }
   return result;
