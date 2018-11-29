@@ -7,20 +7,20 @@ const localStrategy = new LocalStrategy(async (username, password, done) => {
 		const userModel = await models.User.findOne({ where: { username } });
 		// Ensure user exists
 		if (!userModel) {
-			throw new Error({
+			throw {
 				reason: 'LoginError',
 				message: 'Incorrect email',
 				location: 'email'
-			});
+			};
 		}
 		// Ensure input password matches user password
 		const isValid = userModel.validatePassword(password);
 		if (!isValid) {
-			throw new Error({
+			throw {
 				reason: 'LoginError',
 				message: 'Incorrect password',
 				location: 'password'
-			});
+			};
 		}
 		// Add `user` to the request object
 		const user = userModel.dataValues;
