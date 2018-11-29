@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const models = require('../models/index.js');
+const { requireFields } = require('./helpers');
 
 router.get('/', (req, res, next) => {
 	let user;
@@ -30,10 +31,10 @@ function constructNewQueue(queue, M = null) {
 	// Set M to be M*2 or the given M
 	if (!M) M = top.M *= 2;
 	top.M = M;
-	return [...queue.slice(1, M), top, ...queue.slice(M)];
+	return [...queue.slice(1, M + 1), top, ...queue.slice(M + 1)];
 }
 
-router.post('/', async (req, res, next) => {
+router.post('/', requireFields(['confidence']), async (req, res, next) => {
 	// Find user
 	const userModel = await models.User.findOne({
 		where: {
