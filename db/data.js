@@ -1,5 +1,5 @@
 const cards = [
-  { question: '__PLACEHOLDER__', answer: '__PLACEHOLDER__' },
+  { question: 'What is a const?', answer: 'Only Gabe knows.' },
   {
     question: 'What is the difference between <script>, <script async> and <script defer>?',
     answer:
@@ -10,10 +10,14 @@ const cards = [
     answer:
 			'Buttons should be used for interactions within a page, or interactions that don\'t always cause you to leave a page (e.g. form submission). Links should be used for interactions that will always leave the current page.'
   },
-  { question: 'How can you vertically center an element without using Flexbox?', answer: '__PLACEHOLDER__' },
+  {
+    question: 'How can you vertically center an element without using Flexbox?',
+    answer:
+			'Absolute positioning, setting the line-height to equal the height of the parent, or using clever margins (though this requires knowing the absolute proportions of the element).'
+  },
   {
     question: 'How can you design a stack with a max() method that has O(1) lookup time?',
-    answer: '__PLACEHOLDER__'
+    answer: 'Use a second stack to keep track of the maximum values at each point in time.'
   },
   {
     question: 'Is it possible to prevent a form submission from reloading the page without JavaScript?',
@@ -24,7 +28,10 @@ const cards = [
     question: 'What happens when you add a number to a string?',
     answer: 'The number is coerced to a string, then they are added together.'
   },
-  { question: '__PLACEHOLDER__', answer: '__PLACEHOLDER__' }
+  {
+    question: 'How do you succeed in life?',
+    answer: 'Finish your deadlines the day before they are due. Underpromise and overdeliver.'
+  }
 ];
 
 const seedDataQueue = [
