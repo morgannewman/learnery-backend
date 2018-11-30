@@ -13,15 +13,65 @@ router.get('/', async (req, res, next) => {
 			id: user.dataValues.queue[0].id
 		}
 	});
-	return res.json(card);
+	return res.json({ card, stats: user.dataValues.queue[0].stats });
 });
 
-function constructNewQueue(queue, M = null) {
+// Data model defined in db/data.js
+function constructNewQueue(queue, isCorrect) {
 	const top = { ...queue[0] };
 	// Set M to be M*2 or the given M
-	if (!M) M = top.M *= 2;
+	let M;
+	if (isCorrect) M = top.M * 2;
+	else M = 1;
 	top.M = M;
 	return [...queue.slice(1, M + 1), top, ...queue.slice(M + 1)];
+}
+
+function updateUserStats(stats, isCorrect) {
+	/* 
+	stats: {
+		type: DataTypes.JSONB,
+		allowNull: false,
+		defaultValue: {
+			streak: 0,
+			maxStreak: 0,
+			lastSeen: null,
+			secondsSpentAnswering: 0,
+			cardsAnswered: 0
+		}
+	}
+	*/
+	if (isCorrect) {
+		stats.streak++;
+		if (stats.streak > stats.maxStreak) stats.maxStreak = stats.streak;
+	} else {
+		stats.streak = 0;
+	}
+	stats.cardsAnswered++;
+	stats.lastSeen = new Date().toISOString(); // UTC String
+}
+
+function updateCardStats(card, isCorrect) {
+	/**
+	 * Defined in db/data.js
+		 stats: {
+		 	 timesCorrect: 0,
+		 	 timesIncorrect: 0,
+		 	 streak: 0,
+			 maxStreak: 0
+		 }
+	*/
+	const stats = card.stats; // this is an obj so call-by-ref
+	if (isCorrect) {
+		stats.timesCorrect++;
+		stats.streak++;
+		if (stats.streak > stats.maxStreak) stats.maxStreak = stats.streak;
+	} else {
+		stats.timesIncorrect++;
+		stats.streak = 0;
+	}
+	stats.timesSeen++;
+	stats.lastSeen = new Date().toISOString(); // UTC String
 }
 
 router.post('/', requireFields(['confidence']), async (req, res, next) => {
@@ -32,15 +82,20 @@ router.post('/', requireFields(['confidence']), async (req, res, next) => {
 		}
 	});
 	// Grab their queue
-	let { queue } = userModel.dataValues;
+	let { queue, stats } = userModel.dataValues;
 	// Construct new queue based on their answer
 	const { confidence } = req.body;
+	const first = queue[0];
 	switch (confidence) {
 		case '0':
-			queue = constructNewQueue(queue, 1);
+			updateCardStats(first, false);
+			queue = constructNewQueue(queue, false);
+			updateUserStats(stats, false);
 			break;
 		case '1':
-			queue = constructNewQueue(queue);
+			updateCardStats(first, true);
+			queue = constructNewQueue(queue, true);
+			updateUserStats(stats, true);
 			break;
 	}
 	// send user new item
@@ -58,7 +113,7 @@ router.post('/', requireFields(['confidence']), async (req, res, next) => {
 			}
 		)
 	]);
-	return res.json(flashcard);
+	return res.json({ flashcard, stats: queue[0].stats });
 });
 
 module.exports = router;
