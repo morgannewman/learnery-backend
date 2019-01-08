@@ -134,9 +134,45 @@ const seedDataQueue = [
 ];
 
 const users = [
-  { username: 'potato1', email: 'email1@test.com', password: 'password', queue: seedDataQueue },
-  { username: 'tomato2', email: 'email2@test.com', password: 'password', queue: seedDataQueue },
-  { username: 'brosato3', email: 'email3@test.com', password: 'password', queue: seedDataQueue }
+  {
+    username: 'potato1',
+    email: 'email1@test.com',
+    password: 'password',
+    queue: seedDataQueue,
+    stats: {
+      streak: 0,
+      maxStreak: 0,
+      lastSeen: null,
+      secondsSpentAnswering: 0,
+      cardsAnswered: 0
+    }
+  },
+  {
+    username: 'tomato2',
+    email: 'email2@test.com',
+    password: 'password',
+    queue: seedDataQueue,
+    stats: {
+      streak: 0,
+      maxStreak: 0,
+      lastSeen: null,
+      secondsSpentAnswering: 0,
+      cardsAnswered: 0
+    }
+  },
+  {
+    username: 'brosato3',
+    email: 'email3@test.com',
+    password: 'password',
+    queue: seedDataQueue,
+    stats: {
+      streak: 4,
+      maxStreak: 15,
+      lastSeen: null,
+      secondsSpentAnswering: 0,
+      cardsAnswered: 96
+    }
+  }
 ];
 
 function constructQueue() {
